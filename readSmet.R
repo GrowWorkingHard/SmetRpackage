@@ -41,6 +41,13 @@ readSmet <- function(filename, ...)
                     if (tmp[1] == "station_id") id <- as.character(tmp[length(tmp)])
                     else if (tmp[1] == "station_name") name <- as.character(tmp[length(tmp)])
                     else if (tmp[1] == "latitude") lat <- as.numeric(tmp[length(tmp)])
+                    else if (tmp[1] == "longitude") lon <- as.numeric(tmp[length(tmp)])
+                    else if (tmp[1] == "altitude") alt <- as.numeric(tmp[length(tmp)])
+                    else if (tmp[1] == "easting") east <- as.numeric(tmp[length(tmp)])
+                    else if (tmp[1] == "northing") north <- as.numeric(tmp[length(tmp)])
+                    else if (tmp[1] == "epsg") epsg <- as.numeric(tmp[length(tmp)])
+                    else if (tmp[1] == "nodata") novalue <- as.numeric(tmp[length(tmp)])
+                    else if (tmp[1] == "tz") timezone <- as.numeric(tmp[length(tmp)])
                                         #else if (substr(tmp))
                     
                     i <- i + 1
