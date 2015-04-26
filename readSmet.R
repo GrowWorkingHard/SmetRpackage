@@ -48,8 +48,7 @@ readSmet <- function(filename, ...)
                     else if (tmp[1] == "epsg") epsg <- as.numeric(tmp[length(tmp)])
                     else if (tmp[1] == "nodata") novalue <- as.numeric(tmp[length(tmp)])
                     else if (tmp[1] == "tz") timezone <- as.numeric(tmp[length(tmp)])
-                                        #else if (substr(tmp))
-                    
+                                        #else if (substr(tmp))                    
                     i <- i + 1
                 }
             }
