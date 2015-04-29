@@ -48,12 +48,34 @@ readSmet <- function(filename, ...)
                     else if (tmp[1] == "epsg") epsg <- as.numeric(tmp[length(tmp)])
                     else if (tmp[1] == "nodata") novalue <- as.numeric(tmp[length(tmp)])
                     else if (tmp[1] == "tz") timezone <- as.numeric(tmp[length(tmp)])
-                                        #else if (substr(tmp))                    
+                    else if (tmp[1] == "fields") {
+
+                        field_number = 0
+                        for (j in 2:length(tmp)) {
+
+                            if(tmp[j] == "=") start <- j+1
+                            if(tmp[j] != "" && tmp[j] != "=") field_number <- field_number + 1
+
+                        }
+
+                        field_number <- field_number - 1
+
+                        field=c(1:field_number)
+                        index = 1
+                        for (cont in start:length(tmp)) {
+
+                            print(tmp[cont])
+                            field[index] = tmp[cont]
+                            index <- index + 1
+
+                        }
+
+                    }
                     i <- i + 1
                 }
             }
         
-        if (substr(linn[i], 1, 6) == "[DATA]") {val <- smet.readData(linn, i+1);i <- length(linn)}
+        if (substr(linn[i], 1, 6) == "[DATA]") {val <- readData(linn, i+1);i <- length(linn)}
 
     }
 
@@ -68,6 +90,7 @@ readSmet <- function(filename, ...)
         epsg=epsg,
         nodata=novalue,
         tz=timezone,
+        fields=field,
         mat=val
         )
 
