@@ -64,16 +64,15 @@ readSmet <- function(filename, ...)
 
         if (substr(linn[i], 1, 8) == "[HEADER]") {
 
-            i <- i+1
+            i <- i+1 # go to next line
             i <- readHeader(linn, i, header)
 
         }
 
         if (substr(linn[i], 1, 6) == "[DATA]") {
 
-            i <- i + 1
-            val <- readData(linn, i, header$fields, header$tz)
-            i <- length(linn)
+            i <- i + 1 # go to next line
+            val <- readData(linn, i, header$fields, header$tz, header$nodata)
             break
         }
 
@@ -94,6 +93,7 @@ readSmet <- function(filename, ...)
         epsg=header$epsg,
         nodata=header$nodata,
         tz=header$tz,
+        fields=header$fields,
         mat=val
         )
 
@@ -163,7 +163,7 @@ readHeader <- function(linn, i, header) {
 
 }
 
-readData <- function(linn, start, field, timezone) {
+readData <- function(linn, start, field, timezone, nodata) {
 
     mat <- matrix(NA, nrow=(length(linn)+1-start), ncol=length(field))
     data.tot <- data.frame(mat)
@@ -176,22 +176,39 @@ readData <- function(linn, start, field, timezone) {
         for (j in 1:length(field)) {
 
             if (j == 1) {data.tot[i-start+1,1] <- as.character(tmp[j])}
-            else {data.tot[i-start+1,j] <- as.numeric(tmp[j])}
+            else if (tmp[j] == nodata) data.tot[i-start+1,j] <- NA
+            else data.tot[i-start+1,j] <- as.numeric(tmp[j])
 
         }
         
     }
 
+    eval.parent(substitute(start <- i))
     data.tot[,1] <- as.POSIXct(data.tot[,1], "%Y-%m-%dT%H:%M", origin="1970-01-01", tz='GMT')
     
     return(data.tot)
 
 }
 
-print.smet <- function(x, ...)
+print.smet <- function(x)
 {
 
-    cat("Smet file\n")
+    cat("Class: ",class(x),"\n")
+    cat("[HEADER]\n")
+    cat("Station Name:\t",x$station_name,"\n")
     cat("Station ID:\t",x$station_id,"\n")
+    cat("Altitude:\t",x$altitude,"\n")
+    cat("Longitude: ",x$longitude,"\tLatitude: ",x$latitude,"\n")
+    cat("Easting:   ",x$easting,"\tNorthing: ",x$northing,"\n")
+    ## cat("\n")
+    ## cat("\n")
+    ## cat("[GAUGES]\n")
+    ## for (i in 1:length(x$fields)) {
+
+    ##     if (x$fields[i] == "timestamp"){}
+    ##     else cat(x$fields[i],"\t")
+
+    ## }
+    ## cat("\n")
 
 }
