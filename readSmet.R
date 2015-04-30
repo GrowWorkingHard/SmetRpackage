@@ -1,18 +1,42 @@
+#************************************************************************************#
+#*          - GrowWorkingHard'script - www.growworkinghard.wordpress.com -          *#
+#************************************************************************************#
+#                                                                                    #
+# This file is a script writed to complete our blog's articles (all the external     #
+# reference can be found there). It's needed to explain better concepts and give     #
+# to the users an example or a reference.                                            #
+# We don't give you the warranty that is the best solution, but we do all the        #
+# possible to hit it.                                                                #
+#                                                                                    #
+# You're invited to try our solution and communicate if something does't work or if  #
+# there is a better way to do it!                                                    #
+#                                                                                    #
+# Follow our blog: <http://www.growworkinghard.wordpress.com>                        #
+#                                                                                    #
+# Author: Francesco Serafin & Daniele Dalla Torre                                    #
+# Date: 2015-04-24                                                                   #
+#                                                                                    #
+# License: GPL v3                                                                    #
+#                                                                                    #
+#************************************************************************************#
+
 library(stringr)
 
 smet <- function(x, ...) UseMethod("smet")
 
-smet.default <- function(x, ...)
-{
+smet.default <- function
+(x
+### The relative path with the name of the file to read
+ ) {
 
-    tot <- readSmet(x)
+    tot <- .readSmet(x)
 
-    class(tot) <- "smet"
+    class(tot) <- "SMET"
     tot
-
+### The SMET object with all metadata
 }
 
-cleanLine <- function(line)
+.cleanLine <- function(line)
 {
 
     tmp <- unlist(strsplit(line, '[[:blank:]]'))
@@ -25,9 +49,8 @@ cleanLine <- function(line)
 
 }
 
-readSmet <- function(filename, ...)
+.readSmet <- function(filename)
 {
-
 
     id = NA
     name = NA
@@ -65,14 +88,14 @@ readSmet <- function(filename, ...)
         if (substr(linn[i], 1, 8) == "[HEADER]") {
 
             i <- i+1 # go to next line
-            i <- readHeader(linn, i, header)
+            i <- .readHeader(linn, i, header)
 
         }
 
         if (substr(linn[i], 1, 6) == "[DATA]") {
 
             i <- i + 1 # go to next line
-            val <- readData(linn, i, header$fields, header$tz, header$nodata)
+            val <- .readData(linn, i, header$fields, header$tz, header$nodata)
             break
         }
 
@@ -101,7 +124,7 @@ readSmet <- function(filename, ...)
 
 }
 
-readHeader <- function(linn, i, header) {
+.readHeader <- function(linn, i, header) {
 
     id = NA
     name = NA
@@ -117,7 +140,7 @@ readHeader <- function(linn, i, header) {
 
     while(substr(linn[i], 1, 6) != "[DATA]"){
 
-        tmp <- cleanLine(linn[i])
+        tmp <- .cleanLine(linn[i])
         if (tmp[1] == "station_id") id <- as.character(tmp[length(tmp)])
         else if (tmp[1] == "station_name") name <- as.character(tmp[length(tmp)])
         else if (tmp[1] == "latitude") lat <- as.numeric(tmp[length(tmp)])
@@ -163,7 +186,7 @@ readHeader <- function(linn, i, header) {
 
 }
 
-readData <- function(linn, start, field, timezone, nodata) {
+.readData <- function(linn, start, field, timezone, nodata) {
 
     mat <- matrix(NA, nrow=(length(linn)+1-start), ncol=length(field))
     data.tot <- data.frame(mat)
@@ -171,7 +194,7 @@ readData <- function(linn, start, field, timezone, nodata) {
     colnames(data.tot) <-  field
     for (i in start:length(linn)){
 
-        tmp <- cleanLine(linn[i])
+        tmp <- .cleanLine(linn[i])
 
         for (j in 1:length(field)) {
 
@@ -190,7 +213,7 @@ readData <- function(linn, start, field, timezone, nodata) {
 
 }
 
-print.smet <- function(x)
+print.smet <- function(x, ...)
 {
 
     cat("Class: ",class(x),"\n")
@@ -200,15 +223,15 @@ print.smet <- function(x)
     cat("Altitude:\t",x$altitude,"\n")
     cat("Longitude: ",x$longitude,"\tLatitude: ",x$latitude,"\n")
     cat("Easting:   ",x$easting,"\tNorthing: ",x$northing,"\n")
-    ## cat("\n")
-    ## cat("\n")
-    ## cat("[GAUGES]\n")
-    ## for (i in 1:length(x$fields)) {
+    cat("\n")
+    cat("\n")
+    cat("[GAUGES]\n")
+    for (i in 1:length(x$fields)) {
 
-    ##     if (x$fields[i] == "timestamp"){}
-    ##     else cat(x$fields[i],"\t")
+        if (x$fields[i] == "timestamp"){}
+        else cat(x$fields[i],"\t")
 
-    ## }
-    ## cat("\n")
+    }
+    cat("\n")
 
 }
